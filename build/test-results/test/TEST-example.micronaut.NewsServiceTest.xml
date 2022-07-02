@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="example.micronaut.NewsServiceTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2022-07-01T13:02:20" hostname="localadminsMBP2" time="9.225">
+  <properties/>
+  <testcase name="firstInvocationOfNovemberDoesNotHitCache()" classname="example.micronaut.NewsServiceTest" time="3.184"/>
+  <testcase name="secondInvocationOfNovemberHitsCache()" classname="example.micronaut.NewsServiceTest" time="0.005"/>
+  <testcase name="firstInvocationOfOctoberDoesNotHitCache()" classname="example.micronaut.NewsServiceTest" time="3.007"/>
+  <testcase name="secondInvocationOfOctoberHitsCache()" classname="example.micronaut.NewsServiceTest" time="0.002"/>
+  <testcase name="addingAHeadlineToNovemberUpdatesCache()" classname="example.micronaut.NewsServiceTest" time="0.003"/>
+  <testcase name="novemberCacheWasUpdatedByCachePutAndThusTheValueIsRetrievedFromTheCache()" classname="example.micronaut.NewsServiceTest" time="0.001"/>
+  <testcase name="invalidateNovemberCacheWithCacheInvalidate()" classname="example.micronaut.NewsServiceTest" time="0.003"/>
+  <testcase name="octoberCacheIsStillValid()" classname="example.micronaut.NewsServiceTest" time="0.001"/>
+  <testcase name="novemberCacheWasInvalidated()" classname="example.micronaut.NewsServiceTest" time="3.004"/>
+  <system-out><![CDATA[?[36m15:02:20.602?[0;39m ?[1;30m[Test worker]?[0;39m ?[34mINFO ?[0;39m ?[35mi.m.context.env.DefaultEnvironment?[0;39m - Established active environments: [test]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
