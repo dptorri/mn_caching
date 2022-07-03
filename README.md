@@ -28,3 +28,112 @@ micronaut:
       charset: 'UTF-8'
       maximum-size: 20
 ```
+#### 3) Add NewsService
+```
+/**
+ * Use jakarta.inject.Singleton to designate a class as a singleton.
+ */
+@Singleton
+/**
+ * Specifies the cache name "headlines" to store cache operation values in.
+ */
+@CacheConfig("headlines")
+
+    Map<Month, List<String>> headlines = new HashMap<Month, List<String>>() {{
+        put(Month.NOVEMBER, Arrays.asList("November news: article 1", "November: end article 2"));
+        put(Month.OCTOBER, Collections.singletonList("October: On big fat article"));
+    }};
+/**
+ * Indicates a method is cacheable. The cache name headlines specified in @CacheConfig is used. 
+ * Since the method has only one parameter, you don’t need to specify the month parameters 
+ * attribute of the annotation.
+ */
+    @Cacheable 
+    public List<String> headlines(Month month) {
+        try {
+            TimeUnit.SECONDS.sleep(3); /*** do some expensive calculations / async calls **/
+            return headlines.get(month);
+        } catch (InterruptedException e) {
+            return null;
+        }
+    }
+
+/**
+ * The return value is cached with name headlines for the supplied month. The method 
+ * invocation is never skipped even if the cache headlines for the supplied month already exists.
+ */
+    @CachePut(parameters = {"month"}) 
+    public List<String> addHeadline(Month month, String headline) {
+        if (headlines.containsKey(month)) {
+            List<String> l = new ArrayList<>(headlines.get(month));
+            l.add(headline);
+            headlines.put(month, l);
+        } else {
+            headlines.put(month, Arrays.asList(headline));
+        }
+        return headlines.get(month);
+    }
+    
+/**
+ * Method invocation causes the invalidation of the cache headlines for the supplied month.     
+ **/
+        @CacheInvalidate(parameters = {"month"}) 
+    public void removeHeadline(Month month, String headline) {
+        if (headlines.containsKey(month)) {
+            List<String> l = new ArrayList<>(headlines.get(month));
+            l.remove(headline);
+            headlines.put(month, l);
+        }
+    }
+```
+#### 3) Add NewsServiceTest
+- `@TestMethodOrder(MethodOrderer.OrderAnnotation.class)`
+Used to configure the test method execution order for the annotated test class.
+- `@MicronautTest(startApplication = false)` Annotate the class with @MicronautTest so the Micronaut framework 
+will initialize the application context and 
+the embedded server.
+```
+@Inject 
+    NewsService newsService;
+```
+- Inject NewsService bean.
+```
+    @Timeout(4) 
+    @Test
+    @Order(1) 
+    public void firstInvocationOfNovemberDoesNotHitCache() {
+        List<String> headlines = newsService.headlines(Month.NOVEMBER);
+        assertEquals(2, headlines.size());
+    }
+
+```
+
+- `@Timeout(4)`  annotation fails a test if its execution exceeds a given duration. 
+It helps us verify that we are leveraging the cache.
+
+- `@Order` is used to configure the order in which the test method should executed relative to other tests in the class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
