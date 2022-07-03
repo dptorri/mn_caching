@@ -87,6 +87,11 @@ micronaut:
     }
 ```
 #### 3) Add NewsServiceTest
+In simple terms the tests should 
+1) first not hit cache so the response is saved 
+2) the second request should be faster (< 3 Seconds) than our async call
+3) If the endpoint delivers more news our method should put them in the cache
+
 - `@TestMethodOrder(MethodOrderer.OrderAnnotation.class)`
 Used to configure the test method execution order for the annotated test class.
 - `@MicronautTest(startApplication = false)` Annotate the class with @MicronautTest so the Micronaut framework 
@@ -113,7 +118,31 @@ It helps us verify that we are leveraging the cache.
 
 - `@Order` is used to configure the order in which the test method should executed relative to other tests in the class.
 
+#### 4) Add NewsController and NewsControllerTest
+A endpoint returns the news for a given month
+```
+    @Get("/{month}")
+    public News index(Month month) {
+        return new News(month, newsService.headlines(month));
+    }
+```
+The test passes when 2 request are correctly received 
+the async operation takes 3 sec and we make 2 requests in 4 Seconds
+```
+    @Timeout(4)
+    @Test
+    void fetchingOctoberHeadlinesUsesCache() {
+        HttpRequest request = HttpRequest.GET(UriBuilder.of("/").path(Month.OCTOBER.name()).build());
+        News news = client.toBlocking().retrieve(request, News.class);
+        String expected = "Oct 1";
+        // First request
+        assertEquals(Arrays.asList(expected), news.getHeadlines());
 
+        // Second request
+        News news2 = client.toBlocking().retrieve(request, News.class);
+        assertEquals(Arrays.asList(expected), news2.getHeadlines());
+    }
+```
 
 
 
