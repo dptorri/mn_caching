@@ -57,7 +57,7 @@ class NewsServiceTest {
     @Test
     @Order(5) // <5>
     public void addingAHeadlineToNovemberUpdatesCache() {
-        List<String> headlines = newsService.addHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released");
+        List<String> headlines = newsService.addHeadline(Month.NOVEMBER, "Nov 3");
         assertEquals(3, headlines.size());
     }
 
@@ -74,7 +74,7 @@ class NewsServiceTest {
     @Order(7) // <5>
     public void invalidateNovemberCacheWithCacheInvalidate() {
         assertDoesNotThrow(() -> {
-            newsService.removeHeadline(Month.NOVEMBER, "Micronaut 1.3 Milestone 1 Released");
+            newsService.removeHeadline(Month.NOVEMBER, "Nov 3");
         });
     }
 

@@ -3,6 +3,9 @@ Micronaut caching annotations with steps
 
 [original guide] (https://guides.micronaut.io/latest/micronaut-cache-gradle-java.html)
 
+
+### I) SIMPLE EXAMPLE WITH NEWS
+
 #### 0) Enable annotation processor
 ```
 Build > Compiler >  Enable annotation processor
@@ -143,6 +146,44 @@ the async operation takes 3 sec and we make 2 requests in 4 Seconds
         assertEquals(Arrays.asList(expected), news2.getHeadlines());
     }
 ```
+
+
+### II) CACHING USER NEWS PROVIDERS
+
+To fetch a list of news providers the users needs a set of ids [oid, cid, aid] 
+and add to the headers their bearer token providerValue1.
+
+```
+tokenKey1
+providerValue1
+```
+#### II 2.0.1) Add ProviderService
+For ProviderService the HashMap will store more values give a certain key
+```
+  Map<String, List<String>> providers =
+          new HashMap<>() {
+            {
+              put("tokenKey1", Arrays.asList("providerValue1a", "providerValue1b"));
+              put("tokenKey2", Collections.singletonList("providerValue2"));
+            }
+          };
+          
+// This also mean that we replace the List once a new entry is added 
+
+  @CachePut(parameters = {"keyProvider"})
+  public List<String> addProvider(String keyProvider, String newValueProvider) {
+    if (providers.containsKey(keyProvider)) {
+      List<String> l = new ArrayList<>(providers.get(keyProvider));
+      l.add(newValueProvider);
+      providers.put(keyProvider, l);
+    } else {
+      providers.put(keyProvider, List.of(newValueProvider));
+    }
+    return providers.get(keyProvider);
+  }
+```
+
+
 
 
 

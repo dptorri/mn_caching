@@ -15,14 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Singleton // <1>
+@Singleton // <1ii>
 @CacheConfig("headlines") // <2>
 public class NewsService {
 
     Map<Month, List<String>> headlines = new HashMap<Month, List<String>>() {{
-        put(Month.NOVEMBER, Arrays.asList("Micronaut Graduates to Trial Level in Thoughtworks technology radar Vol.1",
-                "Micronaut AOP: Awesome flexibility without the complexity"));
-        put(Month.OCTOBER, Collections.singletonList("Micronaut AOP: Awesome flexibility without the complexity"));
+        put(Month.NOVEMBER, Arrays.asList("Nov 1","Nov 2"));
+        put(Month.OCTOBER, Collections.singletonList("Oct 1"));
     }};
 
     @Cacheable // <3>
@@ -42,7 +41,7 @@ public class NewsService {
             l.add(headline);
             headlines.put(month, l);
         } else {
-            headlines.put(month, Arrays.asList(headline));
+            headlines.put(month, List.of(headline));
         }
         return headlines.get(month);
     }
