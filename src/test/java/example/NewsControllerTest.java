@@ -22,7 +22,7 @@ public class NewsControllerTest {
     EmbeddedServer server;
 
     @Inject
-    @Client("/")
+    @Client("/news")
     HttpClient client;
 
     @Timeout(4) // <1>

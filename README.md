@@ -183,6 +183,52 @@ For ProviderService the HashMap will store more values give a certain key
   }
 ```
 
+#### II 2.0.1) Add ProviderController and test cache
+- Add to `application.yml` under caches: `expire-after-write: 1m` This way teh cache is flushed after 1 min.
+- Request the endpoint twice in 4 seconds to check it is fetching from cache
+```
+// application.yml
+  caches:
+    providers:
+      charset: 'UTF-8'
+      expire-after-write: 1m
+      
+// ProviderController
+      
+providers/{keyProvider}
+```
+#### Benchmark cURL
+```
+// cURL FIRST CALL
+
+❯ curl http://localhost:9999/providers/tokenKey1 --verbose | jq .
+*   Trying 127.0.0.1:9999...9/providers/tokenKey1 --verbose | jq .           ─╯
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+  ........
+100    82  100    82    0     0     27      0  0:00:03  0:00:03 --:--:--    27
+* Connection #0 to host localhost left intact
+{
+  "keyProvider": "tokenKey1",
+  "valuesProvider": [
+    "providerValue1a",
+    "providerValue1b"
+  ]
+}
+// cURL SECOND CALL
+*   Trying 127.0.0.1:9999...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+  ........
+100    82  100    82    0     0   5801      0 --:--:-- --:--:-- --:--:-- 16400
+* Connection #0 to host localhost left intact
+{
+  "keyProvider": "tokenKey1",
+  "valuesProvider": [
+    "providerValue1a",
+    "providerValue1b"
+  ]
+}
+```
+
 
 
 

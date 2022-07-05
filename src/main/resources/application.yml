@@ -1,6 +1,9 @@
 micronaut:
+  server:
+    port: 9999
   caches:
     providers:
       charset: 'UTF-8'
+      expire-after-write: 1m
     headlines:
       charset: 'UTF-8'

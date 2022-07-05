@@ -5,7 +5,7 @@ import io.micronaut.http.annotation.Get;
 
 import java.time.Month;
 
-@Controller // <1>
+@Controller
 public class NewsController {
 
     private final NewsService newsService;
@@ -14,7 +14,7 @@ public class NewsController {
         this.newsService = newsService;
     }
 
-    @Get("/{month}")
+    @Get("news/{month}")
     public News index(Month month) {
         return new News(month, newsService.headlines(month));
     }
